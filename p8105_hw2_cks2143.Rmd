@@ -1,0 +1,19 @@
+---
+title: "Homework 2"
+author: Chariz Seijo
+output: github_document
+---
+
+Solution to HW 2. 
+
+```{r}
+library(tidyverse)
+```
+
+
+# Problem 1
+
+
+
+
+

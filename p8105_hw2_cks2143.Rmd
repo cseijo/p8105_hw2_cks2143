@@ -88,6 +88,30 @@ NYCtransit_df =
 
 This dataset contains information on the NYC transit system entrances, including station line, name and location, routes served, entrance types, ticketing available, and ADA compliance. Data cleaning included renaming variables, specifying the variables (columns) needed for this dataset, and transforming the entry variable from a character to a logical variable. The resulting dataset includes `r nrow(NYCtransit_df)` rows and `r ncol(NYCtransit_df)` columns. The dataset is somewhat tidy but could use some cleaning up for the routes.
 
+There are a total of `r nrow(distinct(NYCtransit_df, line, station_name))` distinct stations.
+
+There are a total of `r nrow(distinct(filter(NYCtransit_df, ada == TRUE), line, station_name))` distinct stations that are ADA compliant.
+
+The proportion of station entrances/exits without vending that allow entrance is `r count(filter(NYCtransit_df, vending == "NO", entry == TRUE))`/`r count(filter(NYCtransit_df, vending == "NO"))`. 
+
+Reformat data with route number and route name as distinct variables.
+
+```{r}
+NYCtransit_tidy = 
+  NYCtransit_df %>%
+  mutate_at(vars(route8:route11), as.character) %>% 
+  pivot_longer(
+    route1:route11,
+    names_to = "route_name",
+    names_prefix = "route",
+    values_to = "route_number") %>% 
+  drop_na(route_number)
+```
+
+There are a total of `r nrow(distinct(filter(NYCtransit_tidy, route_number == "A"), line, station_name))` distinct stations that serve the A train.
+
+Of the distinct stations that serve the A train, of `r nrow(distinct(filter(NYCtransit_tidy, route_number == "A", ada == TRUE), line, station_name))` are ADA compliant.
+
 ## Problem 3
 
 ```{r}

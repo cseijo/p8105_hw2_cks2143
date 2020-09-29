@@ -71,7 +71,11 @@ left_join(precip_df, month_df, by = "month")
 ```
 
 
-This dataset contains information from Mr. Trashwheel trash collector in Baltimore, Maryland. As trash enters the inner harbor, the trashwheel collects that trash and stores it in a dumpster. The dataset contains information on year, month, and trash collected, including some specific kinds of trash. There are a total of `r nrow(trashwheel_df)` observations in our final Mr. Trashwheel dataset. Additional data sheets include month precipitation data. There are a total of `r nrow(precip_df)` observations in our precipitation dataset. In 2018, the total amount of precipitation was `r summarise(precip_2018, sum(total))` inches. In 2017, the median number of sports balls in a dumpster was `r summarise(filter(trashwheel_df, year == 2017), median(sports_balls))`.
+This dataset contains information from Mr. Trashwheel trash collector in Baltimore, Maryland. As trash enters the inner harbor, the trashwheel collects that trash and stores it in a dumpster. The dataset contains information on year, month, and trash collected, including some specific kinds of trash. There are a total of `r nrow(trashwheel_df)` observations in our final Mr. Trashwheel dataset. Additional data sheets include month precipitation data. 
+
+The total precipitation in 2018 was `r precip_df %>% filter(year == 2018) %>% pull(total) %>% sum()` inches.
+
+In 2017, the median number of sports balls in a dumpster was `r summarise(filter(trashwheel_df, year == 2017), median(sports_balls))`.
 
 ## Problem 2
 
@@ -86,13 +90,13 @@ NYCtransit_df =
   mutate(entry = recode(entry, YES = "TRUE", NO = "FALSE"))
 ```
 
-This dataset contains information on the NYC transit system entrances, including station line, name and location, routes served, entrance types, ticketing available, and ADA compliance. Data cleaning included renaming variables, specifying the variables (columns) needed for this dataset, and transforming the entry variable from a character to a logical variable. The resulting dataset includes `r nrow(NYCtransit_df)` rows and `r ncol(NYCtransit_df)` columns. The dataset is somewhat tidy but could use some cleaning up for the routes.
+This dataset contains information on the NYC transit system entrances, including station line, name and location, routes served, entrance types, ticketing available, and ADA compliance. Data cleaning included renaming variables, specifying the variables (columns) needed for this dataset, and transforming the entry variable from a character to a logical variable. The resulting dataset includes `r nrow(NYCtransit_df)` rows and `r ncol(NYCtransit_df)` columns. The dataset is somewhat tidy but could use some cleaning up specifically for the route variables.
 
 There are a total of `r nrow(distinct(NYCtransit_df, line, station_name))` distinct stations.
 
 There are a total of `r nrow(distinct(filter(NYCtransit_df, ada == TRUE), line, station_name))` distinct stations that are ADA compliant.
 
-The proportion of station entrances/exits without vending that allow entrance is `r count(filter(NYCtransit_df, vending == "NO", entry == TRUE))`/`r count(filter(NYCtransit_df, vending == "NO"))`. 
+The proportion of station entrances/exits without vending that allow entrance is `r nrow(filter(NYCtransit_df, vending == "NO", entry == TRUE))`/`r nrow(filter(NYCtransit_df, vending == "NO"))`. 
 
 Reformat data with route number and route name as distinct variables.
 
@@ -110,11 +114,15 @@ NYCtransit_tidy =
 
 There are a total of `r nrow(distinct(filter(NYCtransit_tidy, route_number == "A"), line, station_name))` distinct stations that serve the A train.
 
-Of the distinct stations that serve the A train, of `r nrow(distinct(filter(NYCtransit_tidy, route_number == "A", ada == TRUE), line, station_name))` are ADA compliant.
+Of the distinct stations that serve the A train, `r nrow(distinct(filter(NYCtransit_tidy, route_number == "A", ada == TRUE), line, station_name))` are ADA compliant.
 
 ## Problem 3
 
 ```{r}
-
+pols_df =
+  read_csv(
+      "./Data/fivethirtyeight_datasets/pols-month.csv") %>%
+  janitor::clean_names() %>%
+  separate(mon, c("year", "month", "day"))
 ```
-
+ 

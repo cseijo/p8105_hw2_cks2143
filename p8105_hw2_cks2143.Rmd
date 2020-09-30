@@ -29,7 +29,7 @@ trashwheel_df =
   )
 ```
 
-Read precipitation data.
+Read precipitation data for 2017 and 2018.
 
 ```{r}
 precip_2018 = 
@@ -118,11 +118,41 @@ Of the distinct stations that serve the A train, `r nrow(distinct(filter(NYCtran
 
 ## Problem 3
 
+Read and clean FiveThirtyEight datasets.
+
 ```{r}
 pols_df =
   read_csv(
       "./Data/fivethirtyeight_datasets/pols-month.csv") %>%
+  separate(mon, c("year", "month", "day")) %>% 
+  mutate(
+    president = 
+      case_when(prez_dem == 1 ~ "dem",
+                prez_gop == 1 ~ "gop")) %>% 
+  select(-prez_dem, -prez_gop, -day)
+
+#replacing month to month name
+month538_df =
+  tibble(
+    month = 1:12,
+    month_name = month.name
+  )
+
+left_join(pols_df, month538_df, by = "month")
+
+snp_df =
+  read_csv(
+      "./Data/fivethirtyeight_datasets/snp.csv") %>%
+  separate(date, c("year", "month", "day")) %>% 
+  relocate(year, month)
+
+unemployment_df =
+  read_csv(
+      "./Data/fivethirtyeight_datasets/unemployment.csv") %>%
   janitor::clean_names() %>%
-  separate(mon, c("year", "month", "day"))
+  pivot_longer(
+    jan:dec,
+    names_to = "month",
+    values_to = "unemployed_pct") 
 ```
  

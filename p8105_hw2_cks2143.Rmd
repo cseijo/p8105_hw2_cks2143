@@ -15,7 +15,7 @@ library(readxl)
 
 Read the Mr. Trashwheel dataset.
 
-```{r}
+```{r trashwheel}
 trashwheel_df =
   read_xlsx(
     "./Data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
@@ -31,7 +31,7 @@ trashwheel_df =
 
 Read precipitation data for 2017 and 2018.
 
-```{r}
+```{r precip}
 precip_2018 = 
   read_xlsx(
     "./Data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
@@ -57,7 +57,7 @@ precip_2017 =
 
 Combine annual precipitation.
 
-```{r}
+```{r combine_precip}
 month_df =
   tibble(
     month = 1:12,
@@ -81,7 +81,7 @@ In 2017, the median number of sports balls in a dumpster was `r summarise(filter
 
 Read and clean NYC Transit dataset.
 
-```{r}
+```{r transit}
 NYCtransit_df =
   read_csv(
       "./Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>%
@@ -100,7 +100,7 @@ The proportion of station entrances/exits without vending that allow entrance is
 
 Reformat data with route number and route name as distinct variables.
 
-```{r}
+```{r transit_tidy}
 NYCtransit_tidy = 
   NYCtransit_df %>%
   mutate_at(vars(route8:route11), as.character) %>% 
@@ -120,7 +120,7 @@ Of the distinct stations that serve the A train, `r nrow(distinct(filter(NYCtran
 
 Read and clean FiveThirtyEight datasets.
 
-```{r}
+```{r clean_538}
 pols_df =
   read_csv(
       "./Data/fivethirtyeight_datasets/pols-month.csv") %>%
@@ -131,20 +131,13 @@ pols_df =
                 prez_gop == 1 ~ "gop")) %>% 
   select(-prez_dem, -prez_gop, -day)
 
-#replacing month to month name
-month538_df =
-  tibble(
-    month = 1:12,
-    month_name = month.name
-  )
-
-left_join(pols_df, month538_df, by = "month")
-
 snp_df =
   read_csv(
       "./Data/fivethirtyeight_datasets/snp.csv") %>%
-  separate(date, c("year", "month", "day")) %>% 
-  relocate(year, month)
+  separate(date, c("month", "day", "year")) %>% 
+  relocate(year, month) %>% 
+  arrange(year, month) %>% 
+  select(-day)
 
 unemployment_df =
   read_csv(
@@ -153,6 +146,15 @@ unemployment_df =
   pivot_longer(
     jan:dec,
     names_to = "month",
-    values_to = "unemployed_pct") 
+    values_to = "unemployed_pct")
 ```
  
+
+Changing month number to month name and combining the datasets.
+
+```{r final538}
+
+```
+ 
+
+
